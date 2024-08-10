@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Snake Game</title>
+   <link rel="Stylesheet" href="html.css">
+</head>
+
+<body>
+   <div class="container">
+      <div class="game_details">
+         <div class="score">
+            Score : 0
+         </div>
+       
+      </div>
+      <div class="score_board">
+
+      </div>
+   </div>
+</body>
+<script>
+   const score_board = document.querySelector(".score_board");
+   const score_element= document.querySelector(".score");
+   let foodX, foodY;
+   let velocityX = 0,score=0, velocityY = 0;
+   let snakeX = 4, snakeY = 7, gameover=false, setIntervalid;
+   let snakebody = [];
+   const foodChange = () => {
+      foodX = Math.floor(Math.random() * 30) + 1;
+      foodY = Math.floor(Math.random() * 30) + 1;
+   }
+   const handleGameOver = () => {
+      clearInterval(setIntervalid);
+     alert("game over");
+     location.reload();
+   }
+   const changeDirection = (e) => {
+      console.log(e);
+      if (e.key === "ArrowUp" && velocityY!=1) {
+         velocityX = 0;
+         velocityY = -1;
+      } else if (e.key === "ArrowDown"  && velocityY!=-1) {
+         velocityX = 0;
+         velocityY = 1;
+      } else if (e.key === "ArrowLeft" && velocityX!=1) {
+         velocityX = -1;
+         velocityY = 0;
+      } else if (e.key === "ArrowRight" && velocityX!=-1) {
+         velocityX = 1;
+         velocityY = 0;
+      }
+      Initgame();
+   }
+   const Initgame = () => {
+      if(gameover) return handleGameOver();
+      let HTMLMarkup = `<div class="food" style="grid-area: ${foodY} / ${foodX};"></div>`;
+
+      if (snakeX === foodX && snakeY === foodY) {
+         foodChange();
+         snakebody.push([foodX, foodY]);
+         score++;
+         score_element.innerHTML=`Score : ${score}`;
+      }
+      for (let i = snakebody.length-1; i >0 ; i--) {
+         snakebody[i]= snakebody[i -1];
+      }
+      snakebody[0]= [snakeX,snakeY];
+      snakeX += velocityX;
+      snakeY += velocityY;
+      if(snakeX>30 ||snakeY>30 || snakeX<=0 ||snakeY<=0){
+         gameover=true;
+      }
+      for (let i = 0; i < snakebody.length; i++) {
+         HTMLMarkup += `<div class="snake" style="grid-area: ${snakebody[i][1]} / ${snakebody[i][0]};"></div>`;
+         if(i!== 0 && snakebody[0][1] === snakebody[i][1] && snakebody[0][0] === snakebody[i][0]){
+            gameover=true;
+         }
+      }
+      score_board.innerHTML = HTMLMarkup;
+   }
+   foodChange();
+   setInterval(Initgame, 200);
+   Initgame();
+   document.addEventListener("keydown", changeDirection);
+
+</script>
+
+</html>
